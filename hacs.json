@@ -1,0 +1,7 @@
+{
+  "homeassistant": "2023.11",
+  "name": "AIRMX",
+  "render_readme": true,
+  "zip_release": true,
+  "filename": "airmx.zip"
+}

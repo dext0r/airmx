@@ -1,0 +1,15 @@
+name: AIRMX
+version: '0.0.1.dev1'
+slug: airmx-addon
+description: Local control AIRMX devices
+url: https://github.com/dext0r/airmx
+arch:
+  - aarch64
+  - amd64
+  - armhf
+  - armv7
+init: false
+startup: system
+ports:
+  80/tcp: 25880
+  1883/tcp: 25883

@@ -1,0 +1,2 @@
+#!/usr/bin/with-contenv bashio
+exec /i-airmx-cn.py

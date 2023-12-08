@@ -1,0 +1,132 @@
+{
+  "config": {
+    "abort": {
+      "addon_connection_error": "Failed to get devices from AIRMX addon",
+      "wifi_device_not_found": "Device was not found during discovery, check the AIRMX addon logs",
+      "ble_device_not_found": "Device was not found during BLE discovery, please try again later",
+      "bind_ap_done": "Binding to the Access Point completed",
+      "updated_entry": "Device configuration updated"
+    },
+    "step": {
+      "user": {
+        "menu_options": {
+          "addon": "Automatic setup (AIRMX addon required)",
+          "manual": "Manual setup",
+          "bind_ap": "Bind device to the Access Point"
+        }
+      },
+      "addon": {
+        "title": "Select device"
+      },
+      "select_model": {
+        "title": "Select model",
+        "description": "Select model of device {device}",
+        "data": {
+          "model": "Model"
+        }
+      },
+      "manual": {
+        "title": "Manual setup",
+        "data": {
+          "model": "Model",
+          "id": "ID",
+          "sign_key": "Key",
+          "mqtt_host": "MQTT host",
+          "mqtt_port": "MQTT port"
+        }
+      },
+      "bind_ap": {
+        "title": "Bind device to AP",
+        "data": {
+          "device": "Device",
+          "ssid": "SSID",
+          "password": "Password"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "need_cleaning": {
+        "name": "Need cleaning"
+      },
+      "uv": {
+        "name": "UV sterilization"
+      },
+      "malfunction": {
+        "name": "Malfunction"
+      }
+    },
+    "humidifier": {
+      "humidifier": {
+        "state_attributes": {
+          "mode": {
+            "state": {
+              "manual": "Manual"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "fan_speed": {
+        "name": "Fan speed"
+      }
+    },
+    "select": {
+      "water_type": {
+        "name": "Water type",
+        "state": {
+          "tap": "Tap",
+          "filtered": "Filtered"
+        }
+      }
+    },
+    "sensor": {
+      "remote_sensor_rssi": {
+        "name": "Remote sensor RSSI"
+      },
+      "status": {
+        "name": "Status"
+      },
+      "water_level": {
+        "name": "Water level"
+      },
+      "wud": {
+        "name": "WUD"
+      }
+    },
+    "switch": {
+      "anion": {
+        "name": "Ionization"
+      },
+      "child_lock": {
+        "name": "Child lock"
+      },
+      "heater": {
+        "name": "Heater"
+      },
+      "proximity_sensor": {
+        "name": "Proximity sensor"
+      }
+    }
+  },
+  "services": {
+    "send_command": {
+      "name": "Send command",
+      "description": "Send any commmand to a humidifier. For debug purposes only.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity ID",
+          "description": "Name of the airmx entity."
+        },
+        "id": {
+          "name": "Command ID"
+        },
+        "data": {
+          "name": "Command data"
+        }
+      }
+    }
+  }
+}

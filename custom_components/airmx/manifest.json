@@ -1,0 +1,13 @@
+{
+  "domain": "airmx",
+  "name": "AIRMX",
+  "codeowners": ["@dext0r"],
+  "config_flow": true,
+  "dependencies": ["bluetooth_adapters"],
+  "documentation": "https://github.com/dext0r/airmx",
+  "issue_tracker": "https://github.com/dext0r/airmx/issues",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "requirements": ["paho-mqtt"],
+  "version": "0.0.1.dev1"
+}

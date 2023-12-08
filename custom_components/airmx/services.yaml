@@ -1,0 +1,17 @@
+send_command:
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          integration: airmx
+          domain: humidifier
+    command_id:
+      required: true
+      selector:
+        text:
+          type: number
+    command_data:
+      required: true
+      selector:
+        text:

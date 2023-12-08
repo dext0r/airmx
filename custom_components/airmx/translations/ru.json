@@ -1,0 +1,114 @@
+{
+  "config": {
+    "abort": {
+      "addon_connection_error": "Ошибка получения списка устройства от аддона AIRMX",
+      "wifi_device_not_found": "Устройство не найдено, проверьте журналы аддона AIRMX",
+      "ble_device_not_found": "Устройство не найдено во время BLE обнаружения, попробуйте ещё раз позже",
+      "bind_ap_done": "Привязка к точке доступа выполнена успешно",
+      "updated_entry": "Конфигурация устройства обновлена"
+    },
+    "step": {
+      "user": {
+        "menu_options": {
+          "addon": "Автоматическая настройка (требуется аддон AIRMX)",
+          "manual": "Ручная настройка",
+          "bind_ap": "Привязать устройство к точке доступа"
+        }
+      },
+      "addon": {
+        "title": "Выберите устройство"
+      },
+      "select_model": {
+        "title": "Выберите модель",
+        "description": "Выберите модель устройства {device}",
+        "data": {
+          "model": "Модель"
+        }
+      },
+      "manual": {
+        "title": "Ручная настройка",
+        "data": {
+          "model": "Модель",
+          "id": "ID",
+          "sign_key": "Ключ",
+          "mqtt_host": "Хост MQTT",
+          "mqtt_port": "Порт MQTT"
+        }
+      },
+      "bind_ap": {
+        "title": "Привязка к точке доступа",
+        "data": {
+          "device": "Устройство",
+          "ssid": "SSID",
+          "password": "Пароль"
+        }
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "need_cleaning": {
+        "name": "Требуется очистка"
+      },
+      "uv": {
+        "name": "УФ стерилизация"
+      },
+      "malfunction": {
+        "name": "Неисправность"
+      }
+    },
+    "humidifier": {
+      "humidifier": {
+        "state_attributes": {
+          "mode": {
+            "state": {
+              "manual": "Ручной"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "fan_speed": {
+        "name": "Скорость вентилятора"
+      }
+    },
+    "select": {
+      "water_type": {
+        "name": "Тип воды",
+        "state": {
+          "tap": "Обычная",
+          "filtered": "Фильтрованная"
+        }
+      }
+    },
+    "sensor": {
+      "remote_sensor_rssi": {
+        "name": "Уровень сигнала выносного датчика"
+      },
+      "status": {
+        "name": "Состояние"
+      },
+      "water_level": {
+        "name": "Уровень воды"
+      },
+      "wud": {
+        "name": "WUD"
+      }
+    },
+    "switch": {
+      "anion": {
+        "name": "Ионизация"
+      },
+      "child_lock": {
+        "name": "Блокировка управления"
+      },
+      "heater": {
+        "name": "Нагреватель"
+      },
+      "proximity_sensor": {
+        "name": "Датчик приближения"
+      }
+    }
+  }
+}

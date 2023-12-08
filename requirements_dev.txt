@@ -1,0 +1,7 @@
+mypy==1.7.1
+ruff==0.1.6
+isort==5.12.0
+black==23.11.0
+
+types-paho-mqtt==1.6.0.7
+voluptuous-stubs==0.1.1
