@@ -21,7 +21,7 @@ from .const import CONF_MQTT_HOST, CONF_MQTT_PORT, CONF_SIGN_KEY, CONF_SSID, DOM
 _LOGGER = logging.getLogger(__name__)
 
 ADDON_HOSTNAME = "a06532c7-airmx-addon"
-ADDON_MQTT_PORT = 25883
+DEFAULT_MQTT_PORT = 1883
 
 
 @dataclass
@@ -116,7 +116,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
                     CONF_MODEL: device.model,
                     CONF_SIGN_KEY: device.sign_key,
                     CONF_MQTT_HOST: ADDON_HOSTNAME,
-                    CONF_MQTT_PORT: ADDON_MQTT_PORT,
+                    CONF_MQTT_PORT: DEFAULT_MQTT_PORT,
                 }
             )
             return self._create_or_update_config_entry(self._data)
@@ -138,7 +138,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_ID): cv.positive_int,
                 vol.Required(CONF_SIGN_KEY): cv.string,
                 vol.Required(CONF_MQTT_HOST, default=ADDON_HOSTNAME): cv.string,
-                vol.Required(CONF_MQTT_PORT, default=ADDON_MQTT_PORT): cv.positive_int,
+                vol.Required(CONF_MQTT_PORT, default=DEFAULT_MQTT_PORT): cv.positive_int,
             }
         )
         return self.async_show_form(step_id="manual", data_schema=schema)

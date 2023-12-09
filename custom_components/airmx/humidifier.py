@@ -4,7 +4,6 @@ from typing import Any
 
 from homeassistant.components.humidifier import (
     MODE_AUTO,
-    MODE_NORMAL,
     HumidifierDeviceClass,
     HumidifierEntity,
     HumidifierEntityFeature,
@@ -77,7 +76,7 @@ class AirWaterHumidifier(AirWaterEntity, HumidifierEntity):
     def mode(self) -> str | None:
         return {
             AirWaterMode.SLEEP: MODE_SLEEP,
-            AirWaterMode.MANUAL: MODE_NORMAL,
+            AirWaterMode.MANUAL: MODE_MANUAL,
         }.get(self._device.status.mode, MODE_AUTO)
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -93,7 +92,7 @@ class AirWaterHumidifier(AirWaterEntity, HumidifierEntity):
         await self._device.async_set_mode(
             {
                 MODE_SLEEP: AirWaterMode.SLEEP,
-                MODE_NORMAL: AirWaterMode.MANUAL,
+                MODE_MANUAL: AirWaterMode.MANUAL,
             }.get(mode, AirWaterMode.AUTO)
         )
 
