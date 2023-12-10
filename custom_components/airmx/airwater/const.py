@@ -4,6 +4,8 @@ from enum import IntEnum, IntFlag, StrEnum
 class AirWaterFeature(IntFlag):
     HEATER = 1
     ANION = 2
+    FAN_SPEED_PERCENTAGE = 4
+    FAN_SPEED_STEPS = 8
 
 
 class AirWaterModel(StrEnum):
@@ -28,6 +30,11 @@ class AirWaterModel(StrEnum):
 
         if self not in [self.A5]:
             features |= AirWaterFeature.ANION
+
+        if self in [self.A5]:
+            features |= AirWaterFeature.FAN_SPEED_STEPS
+        else:
+            features |= AirWaterFeature.FAN_SPEED_PERCENTAGE
 
         return features
 
