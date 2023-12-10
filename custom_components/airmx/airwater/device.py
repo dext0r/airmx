@@ -56,9 +56,8 @@ class AirWaterDeviceSettings:
     electrolysis: int = 0
     electrolysis_level: int = 0
 
-    @classmethod
-    def from_command_data(cls, data: CommandData) -> Self:
-        return cls(
+    def update_from_command_data(self, data: CommandData) -> Self:
+        return self.with_changes(
             target_humidity=int(data.get("hThreshold", 0)),
             heater=_get_bool_from_command_data(data, "powerHeatStatus"),
             proximity_sensor=_get_bool_from_command_data(data, "pirLock"),
@@ -346,7 +345,7 @@ class AirWaterDevice:
         await self._async_update_settings(self.settings.with_changes(target_humidity=self._status.target_humidity))
 
     async def _async_handle_new_settings(self, data: CommandData) -> None:
-        await self._async_update_settings(AirWaterDeviceSettings.from_command_data(data))
+        await self._async_update_settings(self._settings.update_from_command_data(data))
 
     async def _async_update_settings(self, settings: AirWaterDeviceSettings) -> None:
         if self._settings != settings:
