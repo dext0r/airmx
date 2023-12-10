@@ -3,6 +3,7 @@ from enum import IntEnum, IntFlag, StrEnum
 
 class AirWaterFeature(IntFlag):
     HEATER = 1
+    ANION = 2
 
 
 class AirWaterModel(StrEnum):
@@ -21,10 +22,14 @@ class AirWaterModel(StrEnum):
 
     @property
     def features(self) -> int:
+        features = 0
         if self in [self.A2, self.A5]:
-            return AirWaterFeature.HEATER
+            features |= AirWaterFeature.HEATER
 
-        return 0
+        if self not in [self.A5]:
+            features |= AirWaterFeature.ANION
+
+        return features
 
 
 class AirWaterCommand(IntEnum):
