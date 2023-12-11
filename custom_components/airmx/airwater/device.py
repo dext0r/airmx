@@ -59,7 +59,7 @@ class AirWaterDeviceSettings:
     def update_from_command_data(self, data: CommandData) -> Self:
         return self.with_changes(
             target_humidity=int(data.get("hThreshold", 0)),
-            heater=_get_bool_from_command_data(data, "powerHeatStatus"),
+            heater=_get_bool_from_command_data(data, "powerHeat"),
             proximity_sensor=_get_bool_from_command_data(data, "pirLock"),
             auto_shake=_get_bool_from_command_data(data, "autoShakeEnable"),
             clean_notify=_get_bool_from_command_data(data, "cleanNotify"),
