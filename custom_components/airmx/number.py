@@ -39,7 +39,7 @@ FAN_SPEED_TYPES = (
         icon="mdi:fan",
         feature=AirWaterFeature.FAN_SPEED_STEPS,
         native_min_value=0,
-        native_max_value=6,
+        native_max_value=7,
         native_step=1,
     ),
 )
