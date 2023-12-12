@@ -30,6 +30,10 @@ class AirWaterBLEDevice:
     device: BLEDevice
 
     @property
+    def name(self) -> str:
+        return self.device.name or ""
+
+    @property
     def address(self) -> str:
         return self.device.address
 
@@ -55,58 +59,45 @@ class AirWaterDeviceInfo:
 
 class FlowHandler(ConfigFlow, domain=DOMAIN):
     def __init__(self) -> None:
-        self._registered_devices: dict[int, AirWaterDeviceInfo] = {}
-        self._discovered_devices: dict[str, AirWaterBLEDevice] = {}
         self._data: ConfigType = {}
-
-        for ble_device in bluetooth.async_get_scanner(self.hass).discovered_devices:
-            if ble_device.name is not None:
-                try:
-                    device = AirWaterBLEDevice(model=AirWaterModel(ble_device.name), device=ble_device)
-                    self._discovered_devices[device.address] = device
-                except ValueError:
-                    pass
+        self._wifi_devices: dict[int, AirWaterDeviceInfo] = {}
+        self._ble_devices: dict[str, AirWaterBLEDevice] = {}
 
     async def async_step_user(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
-        return self.async_show_menu(step_id="user", menu_options=["addon", "manual", "bind_ap"])
+        return self.async_show_menu(step_id="user", menu_options=["select_device", "manual", "bind_ap"])
 
-    async def async_step_addon(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_select_device(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
         if user_input is not None:
-            self._data[CONF_ID] = int(user_input[CONF_ID])
-            return await self.async_step_select_model()
+            if device_id := int(user_input.get(CONF_ID, 0)):
+                self._data[CONF_ID] = device_id
+                return await self.async_step_select_model()
 
-        http = async_get_clientsession(self.hass)
         try:
-            devices_response = await http.get(f"http://{ADDON_HOSTNAME}/_devices")
-            devices_response.raise_for_status()
-            devices: list[AirWaterDeviceInfo] = [AirWaterDeviceInfo.from_dict(d) for d in await devices_response.json()]
+            await self._async_discover_wifi_devices()
         except Exception as e:
             _LOGGER.exception(e)
             return self.async_abort(reason="addon_connection_error")
 
-        if not devices:
-            return self.async_abort(reason="wifi_device_not_found")
-
-        options: list[SelectOptionDict] = []
-        for device in devices:
-            if ble_device := self._discovered_devices.get(device.ble_mac):
-                device.model = ble_device.model
-
-            self._registered_devices[device.id] = device
-
-            options.append(SelectOptionDict(value=str(device.id), label=device.name))
+        if not self._wifi_devices:
+            return self.async_show_form(step_id="select_device", errors={"base": "device_not_found"})
 
         schema = vol.Schema(
             {
-                vol.Required(CONF_ID): SelectSelector(
-                    SelectSelectorConfig(mode=SelectSelectorMode.LIST, options=options),
+                vol.Optional(CONF_ID): SelectSelector(
+                    SelectSelectorConfig(
+                        mode=SelectSelectorMode.LIST,
+                        options=[
+                            SelectOptionDict(value=str(device.id), label=device.name)
+                            for device in self._wifi_devices.values()
+                        ],
+                    ),
                 )
             }
         )
-        return self.async_show_form(step_id="addon", data_schema=schema)
+        return self.async_show_form(step_id="select_device", data_schema=schema)
 
     async def async_step_select_model(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
-        device = self._registered_devices[self._data[CONF_ID]]
+        device = self._wifi_devices[self._data[CONF_ID]]
         if user_input is not None:
             device.model = AirWaterModel(user_input[CONF_MODEL])
 
@@ -144,44 +135,48 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="manual", data_schema=schema)
 
     async def async_step_bind_ap(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
-        devices: dict[str, BLEDevice] = {}
-        for device in bluetooth.async_get_scanner(self.hass).discovered_devices:
-            if device.name is not None:
-                try:
-                    AirWaterModel(device.name)
-                    devices[device.address] = device
-                except ValueError:
-                    pass
-
-        if not devices:
-            return self.async_abort(reason="ble_device_not_found")
-
         if user_input is not None:
-            try:
-                device = devices[user_input[CONF_DEVICE]]
-            except KeyError:
-                return self.async_abort(reason="ble_device_not_found")
+            if device := user_input.get(CONF_DEVICE):
+                self._data[CONF_DEVICE] = device
+                return await self.async_step_bind_ap_confirm()
 
-            await AirWaterBLEConnector().bind_ap(device, user_input[CONF_SSID], user_input[CONF_PASSWORD])
+        self._discover_ble_devices()
 
-            return self.async_abort(reason="bind_ap_done")
+        if not self._ble_devices:
+            return self.async_show_form(step_id="bind_ap", errors={"base": "device_not_found"})
 
         schema = vol.Schema(
             {
                 vol.Required(CONF_DEVICE): SelectSelector(
                     SelectSelectorConfig(
-                        mode=SelectSelectorMode.DROPDOWN,
+                        mode=SelectSelectorMode.LIST,
                         options=[
-                            SelectOptionDict(value=d.address, label=f"{d.name}: {d.address}") for d in devices.values()
+                            SelectOptionDict(value=d.address, label=f"{d.name}: {d.address}")
+                            for d in self._ble_devices.values()
                         ],
                     ),
                 ),
-                vol.Required(CONF_SSID): cv.string,
-                vol.Required(CONF_PASSWORD): cv.string,
             }
         )
         return self.async_show_form(step_id="bind_ap", data_schema=schema)
 
+    async def async_step_bind_ap_confirm(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+        if user_input is not None:
+            device = self._ble_devices[self._data[CONF_DEVICE]]
+
+            await AirWaterBLEConnector().bind_ap(device.device, user_input[CONF_SSID], user_input[CONF_PASSWORD])
+
+            return self.async_abort(reason="bind_ap_done")
+
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_SSID): cv.string,
+                vol.Required(CONF_PASSWORD): cv.string,
+            }
+        )
+        return self.async_show_form(step_id="bind_ap_confirm", data_schema=schema)
+
+    #
     @property
     def _model_selector(self) -> SelectSelector:
         return SelectSelector(
@@ -200,3 +195,26 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
                 return self.async_abort(reason="updated_entry")
 
         return self.async_create_entry(title=title, data=data)
+
+    def _discover_ble_devices(self) -> None:
+        for ble_device in bluetooth.async_get_scanner(self.hass).discovered_devices:
+            if ble_device.name is not None:
+                try:
+                    device = AirWaterBLEDevice(model=AirWaterModel(ble_device.name), device=ble_device)
+                    self._ble_devices[device.address] = device
+                except ValueError:
+                    pass
+
+    async def _async_discover_wifi_devices(self) -> None:
+        self._discover_ble_devices()
+
+        http = async_get_clientsession(self.hass)
+        response = await http.get(f"http://{ADDON_HOSTNAME}/_devices")
+        response.raise_for_status()
+        for data in await response.json():
+            device = AirWaterDeviceInfo.from_dict(data)
+
+            if ble_device := self._ble_devices.get(device.ble_mac):
+                device.model = ble_device.model
+
+            self._wifi_devices[device.id] = device

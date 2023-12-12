@@ -1,22 +1,24 @@
 {
   "config": {
     "abort": {
-      "addon_connection_error": "Failed to get devices from AIRMX addon",
-      "wifi_device_not_found": "Device was not found during discovery, check the AIRMX addon logs",
-      "ble_device_not_found": "Device was not found during BLE discovery, please try again later",
+      "addon_connection_error": "Failed to get device list from AIRMX addon",
       "bind_ap_done": "Binding to the Access Point completed",
       "updated_entry": "Device configuration updated"
+    },
+    "error": {
+      "device_not_found": "Device was not found"
     },
     "step": {
       "user": {
         "menu_options": {
-          "addon": "Automatic setup (AIRMX addon required)",
+          "select_device": "Automatic setup (AIRMX addon required)",
           "manual": "Manual setup",
           "bind_ap": "Bind device to the Access Point"
         }
       },
-      "addon": {
-        "title": "Select device"
+      "select_device": {
+        "title": "Select device",
+        "description": "Select device or click SUBMIT to update device list"
       },
       "select_model": {
         "title": "Select model",
@@ -36,9 +38,12 @@
         }
       },
       "bind_ap": {
+        "title": "Select device",
+        "description": "Select device or click SUBMIT to update device list"
+      },
+      "bind_ap_confirm": {
         "title": "Bind device to AP",
         "data": {
-          "device": "Device",
           "ssid": "SSID",
           "password": "Password"
         }
