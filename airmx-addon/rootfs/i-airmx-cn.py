@@ -58,7 +58,7 @@ def root() -> str:
 
 
 @app.route("/aw")
-def aw() -> dict[str, Any]:
+def aw() -> dict[str, Any] | str:
     if (path := request.args.get("path")) != "aw/GET/genId":
         app.logger.error(f"Unsupported path {path}")
         raise HTTPException.NotImplemented()
@@ -75,9 +75,10 @@ def aw() -> dict[str, Any]:
         ts=int(datetime.now().timestamp()),
     )
 
+    data: dict[str, Any] | None = None
     match device.type:
         case 11:  # A5
-            data = {"awId": device.id}
+            pass
         case 21:  # A3S_V2 / Iris
             data = {
                 "awId": device.id,
@@ -99,6 +100,9 @@ def aw() -> dict[str, Any]:
 
     with open(DEVICE_STORE_PATH, "w") as f:
         json.dump(devices, f, cls=EnhancedJSONEncoder)
+
+    if not data:
+        return '{"status":200,"data":{"awId":%d}}' % device.id
 
     return {"status": 200, "data": data}
 
