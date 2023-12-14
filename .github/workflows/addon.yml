@@ -1,0 +1,25 @@
+name: Addon
+
+on: # TODO: change to release
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and push tagged Docker image
+        run: |
+          docker run --rm --privileged \
+            -v ~/.docker:/root/.docker \
+            -v /var/run/docker.sock:/var/run/docker.sock \
+            -v "$(pwd)":/data homeassistant/amd64-builder \
+            --target airmx-addon \
+            --all \
+            --docker-user ${{ secrets.DOCKER_USERNAME }} \
+            --docker-password ${{ secrets.DOCKER_PASSWORD }}

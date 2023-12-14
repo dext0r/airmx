@@ -1,8 +1,9 @@
 name: AIRMX
-version: '0.0.1.dev1'
+version: '0.0.1.dev2'
 slug: airmx-addon
 description: Local control AIRMX devices
 url: https://github.com/dext0r/airmx
+image: dextor/ha-addon-airmx-{arch}
 arch:
   - aarch64
   - amd64
