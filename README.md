@@ -81,7 +81,7 @@
 1. Создать сеть с SSID `miaoxin` и паролем `miaoxin666`
 2. Настроить DNATы (проброс портов, вместо `X.X.X.X` - IP сервера HA):
   * `i.airmx.cn 82.157.56.105 80/tcp` на `X.X.X.X:25880`
-  * `awm.awn.cn 140.143.130.176 1883/tcp` на `X.X.X.X:25883`
+  * `awm.airmx.cn 140.143.130.176 1883/tcp` на `X.X.X.X:25883`
 
 Получилось настроить? - Напишите в чат [@homeassistant_airmx](https://t.me/homeassistant_airmx)
 
