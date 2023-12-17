@@ -91,6 +91,8 @@ def aw() -> dict[str, Any] | str:
                 "electrolysisLevel3OffTime": 1200,
                 "electrolysisLevel1OffTime": 120,
             }
+        case 30:  # A2
+            pass
         case _:
             app.logger.error(f"Unsupported device: {device}")
             raise HTTPException.NotImplemented()
