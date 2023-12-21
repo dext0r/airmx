@@ -91,9 +91,13 @@ class AirWaterTemperatureSensor(AirWaterEntity, SensorEntity):
 
     @property
     def native_value(self) -> float | None:
-        for value in [self._device.status.remote_sensor_temperature, self._device.status.internal_sensor_temperature]:
-            if value is not None:
-                return round(value, 1)
+        if self._device.status.remote_sensor_online:
+            value = self._device.status.remote_sensor_temperature
+        else:
+            value = self._device.status.internal_sensor_temperature
+
+        if value:
+            return round(value, 1)
 
         return None
 

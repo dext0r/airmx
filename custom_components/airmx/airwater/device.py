@@ -156,8 +156,10 @@ class AirWaterDeviceStatus:
             status.malfunction = True
 
         if status.remote_sensor_online:
-            if not status.remote_sensor_temperature or not status.remote_sensor_temperature:
-                status.remote_sensor_online = False
+            if status.remote_sensor_temperature is not None and not 0 < status.remote_sensor_temperature < 100:
+                status.remote_sensor_temperature = None
+            if status.remote_sensor_humidity is not None and not 0 < status.remote_sensor_humidity < 100:
+                status.remote_sensor_humidity = None
 
         return status
 

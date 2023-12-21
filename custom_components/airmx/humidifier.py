@@ -59,9 +59,13 @@ class AirWaterHumidifier(AirWaterEntity, HumidifierEntity):
 
     @property
     def current_humidity(self) -> int | None:
-        for value in [self._device.status.remote_sensor_humidity, self._device.status.internal_sensor_humidity]:
-            if value is not None:
-                return int(value)
+        if self._device.status.remote_sensor_online:
+            value = self._device.status.remote_sensor_humidity
+        else:
+            value = self._device.status.internal_sensor_humidity
+
+        if value:
+            return int(value)
 
         return None
 
