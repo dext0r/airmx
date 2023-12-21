@@ -161,6 +161,9 @@ class AirWaterDeviceStatus:
             if status.remote_sensor_humidity is not None and not 0 < status.remote_sensor_humidity < 100:
                 status.remote_sensor_humidity = None
 
+        if status.water_level == NULL_VALUE:
+            status.water_level = 0
+
         return status
 
     @property
