@@ -14,7 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .airwater.device import AirWaterDevice
-from .const import ATTR_REMOTE_SENSOR_RSSI, ATTR_STATUS, ATTR_WATER_LEVEL, ATTR_WUD, DEVICES, DOMAIN
+from .const import ATTR_HUMIDITY, ATTR_REMOTE_SENSOR_RSSI, ATTR_STATUS, ATTR_WATER_LEVEL, ATTR_WUD, DEVICES, DOMAIN
 from .entity import AirWaterEntity
 
 SENSOR_TYPES = (
@@ -53,6 +53,7 @@ async def async_setup_entry(
     device: AirWaterDevice = hass.data[DOMAIN][DEVICES][entry.entry_id]
     entities: list[SensorEntity] = [
         AirWaterTemperatureSensor(device, entry),
+        AirWaterHumiditySensor(device, entry),
         AirWaterStatusSensor(device, entry),
     ]
 
@@ -98,6 +99,32 @@ class AirWaterTemperatureSensor(AirWaterEntity, SensorEntity):
 
         if value:
             return round(value, 1)
+
+        return None
+
+
+class AirWaterHumiditySensor(AirWaterEntity, SensorEntity):
+    entity_description = SensorEntityDescription(
+        key=ATTR_HUMIDITY,
+        translation_key=ATTR_HUMIDITY,
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.HUMIDITY,
+        state_class=SensorStateClass.MEASUREMENT,
+    )
+
+    @property
+    def unique_id(self) -> str:
+        return f"{super().unique_id}_{self.entity_description.key}"
+
+    @property
+    def native_value(self) -> int | None:
+        if self._device.status.remote_sensor_online:
+            value = self._device.status.remote_sensor_humidity
+        else:
+            value = self._device.status.internal_sensor_humidity
+
+        if value:
+            return int(value)
 
         return None
 
