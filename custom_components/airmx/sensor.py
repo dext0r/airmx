@@ -73,8 +73,8 @@ class AirWaterGenericSensor(AirWaterEntity, SensorEntity):
         return f"{super().unique_id}_{self.entity_description.key}"
 
     @property
-    def native_value(self) -> int:
-        return cast(int, getattr(self._device.status, self.entity_description.key))
+    def native_value(self) -> int | None:
+        return cast(int | None, getattr(self._device.status, self.entity_description.key))
 
 
 class AirWaterTemperatureSensor(AirWaterEntity, SensorEntity):

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import hashlib
 import json
 import logging
-from typing import Any, Callable, Self, cast
+from typing import Any, Callable, Optional, Self, TypeVar, cast
 
 from homeassistant.core import CALLBACK_TYPE, Event, HassJob, HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
@@ -15,6 +15,7 @@ from ..mqtt.client import MQTTClient
 from .const import AirWaterCommand, AirWaterMode, AirWaterModel, WaterType
 
 _LOGGER = logging.getLogger(__name__)
+_T = TypeVar("_T", int, float)
 
 AVAILABILITY_TIMEOUT = timedelta(seconds=30)
 UPDATE_INTERVAL = 600
@@ -41,6 +42,16 @@ def _get_float_from_command_data(data: CommandData, key: str) -> float | None:
 
 def _get_int_from_command_data(data: CommandData, key: str, default: int = 0) -> int:
     return int(data.get(key, default))
+
+
+def _value_in_range(value: Optional[_T], low_high_range: tuple[_T, _T]) -> Optional[_T]:
+    if value is None or value == NULL_VALUE:
+        return None
+
+    if low_high_range[0] <= value <= low_high_range[1]:
+        return value
+
+    return None
 
 
 @dataclasses.dataclass
@@ -109,7 +120,7 @@ class AirWaterDeviceStatus:
     uv: bool = True
     anion: bool = True
     target_humidity: int = 0
-    water_level: int = 0
+    water_level: int | None = None
     internal_sensor_humidity: float | None = None
     internal_sensor_temperature: float | None = None
     remote_sensor_online: bool = False
@@ -136,13 +147,13 @@ class AirWaterDeviceStatus:
             uv=_get_bool_from_command_data(data, "uv"),
             anion=_get_bool_from_command_data(data, "anion"),
             target_humidity=_get_int_from_command_data(data, "hThreshold"),
-            water_level=_get_int_from_command_data(data, "water"),
-            internal_sensor_humidity=_get_float_from_command_data(data, "h0"),
-            internal_sensor_temperature=_get_float_from_command_data(data, "t0"),
+            water_level=_value_in_range(_get_int_from_command_data(data, "water"), (0, 120)),
+            internal_sensor_humidity=_value_in_range(_get_float_from_command_data(data, "h0"), (0.1, 100)),
+            internal_sensor_temperature=_value_in_range(_get_float_from_command_data(data, "t0"), (0.1, 100)),
             remote_sensor_online=_get_bool_from_command_data(data, "gooseOnline"),
             remote_sensor_rssi=_get_int_from_command_data(data, "bleSignal", -100),
-            remote_sensor_humidity=_get_float_from_command_data(data, "h"),
-            remote_sensor_temperature=_get_float_from_command_data(data, "t"),
+            remote_sensor_humidity=_value_in_range(_get_float_from_command_data(data, "h"), (0.1, 100)),
+            remote_sensor_temperature=_value_in_range(_get_float_from_command_data(data, "t"), (0.1, 100)),
             need_cleaning=_get_bool_from_command_data(data, "isNeedClean"),
             heater=_get_bool_from_command_data(data, "powerHeatStatus"),
             wud=_get_int_from_command_data(data, "WUD"),
@@ -154,15 +165,6 @@ class AirWaterDeviceStatus:
         if status.mode == AirWaterMode.MALFUNCTION:
             status.mode = AirWaterMode.AUTO
             status.malfunction = True
-
-        if status.remote_sensor_online:
-            if status.remote_sensor_temperature is not None and not 0 < status.remote_sensor_temperature < 100:
-                status.remote_sensor_temperature = None
-            if status.remote_sensor_humidity is not None and not 0 < status.remote_sensor_humidity < 100:
-                status.remote_sensor_humidity = None
-
-        if status.water_level == NULL_VALUE:
-            status.water_level = 0
 
         return status
 
