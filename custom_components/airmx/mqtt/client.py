@@ -1,8 +1,8 @@
 import asyncio
 import logging
-from typing import Any, Coroutine
+from typing import Any, Callable, Coroutine
 
-from homeassistant.core import HassJob, HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 import paho.mqtt.client as mqtt
 
@@ -28,9 +28,9 @@ class MQTTClient:
         self._lock = asyncio.Lock()
 
         self.subscribe_topics: list[str] = []
-        self.on_message: HassJob[[mqtt.MQTTMessage], Coroutine[Any, Any, None] | None] | None = None
-        self.on_connect: HassJob[[], Coroutine[Any, Any, None] | None] | None = None
-        self.on_disconnect: HassJob[[], Coroutine[Any, Any, None] | None] | None = None
+        self.on_message: Callable[[mqtt.MQTTMessage], Coroutine[Any, Any, None]] | None = None
+        self.on_connect: Callable[[], Coroutine[Any, Any, None]] | None = None
+        self.on_disconnect: Callable[[], Coroutine[Any, Any, None]] | None = None
 
         if username and password:
             self._client.username_pw_set(username, password)
@@ -77,8 +77,8 @@ class MQTTClient:
             _LOGGER.info(f"Subscribe to {topic}")
             self._client.subscribe(topic)
 
-        if self.on_connect:
-            self._hass.async_run_hass_job(self.on_connect)
+        if self.on_connect is not None:
+            self._hass.add_job(self.on_connect())
 
     def _mqtt_on_disconnect(
         self,
@@ -90,16 +90,13 @@ class MQTTClient:
         _LOGGER.info(f"Disconnected from MQTT server ({result_code})")
 
         if self.on_disconnect:
-            self._hass.async_run_hass_job(self.on_disconnect)
+            self._hass.add_job(self.on_disconnect())
 
     def _mqtt_on_message(self, _mqttc: mqtt.Client, _userdata: None, msg: mqtt.MQTTMessage) -> None:
-        self._hass.loop.call_soon_threadsafe(self._mqtt_handle_message, msg)
-
-    @callback
-    def _mqtt_handle_message(self, msg: mqtt.MQTTMessage) -> None:
         _LOGGER.debug(f"Received from MQTT: {msg.payload!r}")
+
         if self.on_message:
-            self._hass.async_run_hass_job(self.on_message, msg)
+            self._hass.add_job(self.on_message(msg))
 
     @staticmethod
     def _raise_on_error(result_code: int) -> None:

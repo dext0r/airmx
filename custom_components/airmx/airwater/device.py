@@ -5,7 +5,7 @@ import json
 import logging
 from typing import Any, Callable, Optional, Self, TypeVar, cast
 
-from homeassistant.core import CALLBACK_TYPE, Event, HassJob, HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, Event, HomeAssistant
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.storage import Store
 from homeassistant.util.json import json_loads_object
@@ -204,9 +204,9 @@ class AirWaterDevice:
         self._hass = hass
         self._mqttc = MQTTClient(hass, mqtt_host, mqtt_port, f"aw_{device_id}", sign_key)
         self._mqttc.subscribe_topics = [f"airwater/01/0/1/1/{self.id}"]
-        self._mqttc.on_message = HassJob(self._async_handle_mqtt_message)
-        self._mqttc.on_connect = HassJob(self._async_subscribe_for_updates)
-        self._mqttc.on_disconnect = HassJob(self._async_notify)
+        self._mqttc.on_message = self._async_handle_mqtt_message
+        self._mqttc.on_connect = self._async_subscribe_for_updates
+        self._mqttc.on_disconnect = self._async_notify
         self._sign_key = sign_key
         self._status = AirWaterDeviceStatus()
         self._settings_store = settings_store
@@ -320,9 +320,9 @@ class AirWaterDevice:
             case _:
                 _LOGGER.error(f"Unknown command: {state_report['cmdId']}")
 
-        self._async_notify()
+        await self._async_notify()
 
-    def _async_notify(self) -> None:
+    async def _async_notify(self) -> None:
         """Notify all listeners that data has been updated."""
         for listener in self._listeners:
             listener()
@@ -334,7 +334,7 @@ class AirWaterDevice:
         await self.async_send_command(AirWaterCommand.SET, new_settings.as_command_data)
 
     async def _async_subscribe_for_updates(self, _: datetime | None = None) -> None:
-        self._async_notify()
+        await self._async_notify()
 
         if self._mqttc.connected:
             await self.async_send_command(
