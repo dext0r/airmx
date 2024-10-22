@@ -24,8 +24,7 @@ class AirWaterSwitchDescriptionMixin:
 
 
 @dataclass(frozen=True)
-class AirWaterSwitchDescription(SwitchEntityDescription, AirWaterSwitchDescriptionMixin):
-    ...
+class AirWaterSwitchDescription(SwitchEntityDescription, AirWaterSwitchDescriptionMixin): ...
 
 
 SWITCH_TYPES = (

@@ -18,8 +18,7 @@ class AirWaterFanSpeedDescriptionMixin:
 
 
 @dataclass(frozen=True)
-class AirWaterFanSpeedDescription(NumberEntityDescription, AirWaterFanSpeedDescriptionMixin):
-    ...
+class AirWaterFanSpeedDescription(NumberEntityDescription, AirWaterFanSpeedDescriptionMixin): ...
 
 
 FAN_SPEED_TYPES = (

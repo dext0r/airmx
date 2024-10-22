@@ -7,7 +7,7 @@ python = ">=3.12,<3.13"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.0.1"
-ruff = "^0.6.9"
+ruff = "^0.7.0"
 isort = "^5.13.2"
 black = "^24.10.0"
 mypy-dev = "1.12.0a5"
@@ -34,7 +34,7 @@ combine_as_imports = true
 known_first_party = ["custom_components.airmx"]
 
 [tool.mypy]
-python_version = 3.12
+python_version = "3.12"
 follow_imports_for_stubs = true
 local_partial_types = true
 strict_equality = true
