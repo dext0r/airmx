@@ -1,3 +1,4 @@
+# hadolint global ignore=DL3006,DL3042
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
