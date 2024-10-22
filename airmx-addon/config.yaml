@@ -1,5 +1,5 @@
 name: AIRMX
-version: '0.0.1.dev4'
+version: '0.1.0'
 slug: airmx-addon
 description: Local control AIRMX devices
 url: https://github.com/dext0r/airmx

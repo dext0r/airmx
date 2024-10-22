@@ -9,5 +9,5 @@
   "integration_type": "device",
   "iot_class": "local_push",
   "requirements": ["paho-mqtt"],
-  "version": "0.0.1.dev1"
+  "version": "0.1.0"
 }
