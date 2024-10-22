@@ -1,4 +1,4 @@
-*.iml
-.mypy_cache
+.config
 research
 tools
+poetry.lock
