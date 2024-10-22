@@ -32,13 +32,11 @@ async def async_setup_entry(
     platform = entity_platform.async_get_current_platform()
     platform.async_register_entity_service(
         SERVICE_SEND_COMMAND,
-        vol.Schema(
-            {
-                vol.Required(ATTR_ENTITY_ID): cv.entity_id,
-                vol.Required(ATTR_COMMAND_ID): vol.Coerce(int),
-                vol.Required(ATTR_COMMAND_DATA): cv.string,
-            }
-        ),
+        {
+            vol.Required(ATTR_ENTITY_ID): cv.entity_id,
+            vol.Required(ATTR_COMMAND_ID): vol.Coerce(int),
+            vol.Required(ATTR_COMMAND_DATA): cv.string,
+        },
         "async_send_command",
     )
 
