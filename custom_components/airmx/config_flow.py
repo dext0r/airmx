@@ -3,9 +3,8 @@ import logging
 from typing import Self
 
 from bleak import BLEDevice
-from homeassistant import data_entry_flow
 from homeassistant.components import bluetooth
-from homeassistant.config_entries import ConfigFlow
+from homeassistant.config_entries import ConfigFlow, ConfigFlowResult
 from homeassistant.const import CONF_DEVICE, CONF_ID, CONF_MODEL, CONF_PASSWORD
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
@@ -63,10 +62,10 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
         self._wifi_devices: dict[int, AirWaterDeviceInfo] = {}
         self._ble_devices: dict[str, AirWaterBLEDevice] = {}
 
-    async def async_step_user(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_user(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         return self.async_show_menu(step_id="user", menu_options=["select_device", "manual", "bind_ap"])
 
-    async def async_step_select_device(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_select_device(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         if user_input is not None:
             if device_id := int(user_input.get(CONF_ID, 0)):
                 self._data[CONF_ID] = device_id
@@ -96,7 +95,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
         )
         return self.async_show_form(step_id="select_device", data_schema=schema)
 
-    async def async_step_select_model(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_select_model(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         device = self._wifi_devices[self._data[CONF_ID]]
         if user_input is not None:
             device.model = AirWaterModel(user_input[CONF_MODEL])
@@ -119,7 +118,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
             description_placeholders={"device": device.name},
         )
 
-    async def async_step_manual(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_manual(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         if user_input is not None:
             return self._create_or_update_config_entry(user_input)
 
@@ -134,7 +133,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
         )
         return self.async_show_form(step_id="manual", data_schema=schema)
 
-    async def async_step_bind_ap(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_bind_ap(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         if user_input is not None:
             if device := user_input.get(CONF_DEVICE):
                 self._data[CONF_DEVICE] = device
@@ -160,7 +159,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
         )
         return self.async_show_form(step_id="bind_ap", data_schema=schema)
 
-    async def async_step_bind_ap_confirm(self, user_input: ConfigType | None = None) -> data_entry_flow.FlowResult:
+    async def async_step_bind_ap_confirm(self, user_input: ConfigType | None = None) -> ConfigFlowResult:
         if user_input is not None:
             device = self._ble_devices[self._data[CONF_DEVICE]]
 
@@ -186,7 +185,7 @@ class FlowHandler(ConfigFlow, domain=DOMAIN):
             ),
         )
 
-    def _create_or_update_config_entry(self, data: ConfigType) -> data_entry_flow.FlowResult:
+    def _create_or_update_config_entry(self, data: ConfigType) -> ConfigFlowResult:
         title = f"{data[CONF_MODEL]}: {data[CONF_ID]}"
 
         for entry in self.hass.config_entries.async_entries(DOMAIN):

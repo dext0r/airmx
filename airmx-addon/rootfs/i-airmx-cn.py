@@ -30,7 +30,7 @@ class Device:
 class EnhancedJSONEncoder(json.JSONEncoder):
     def default(self, o: Any) -> Any:
         if is_dataclass(o):
-            return asdict(o)
+            return asdict(o)  # type: ignore
 
         return super().default(o)
 

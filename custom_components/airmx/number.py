@@ -12,12 +12,12 @@ from .const import ATTR_FAN_SPEED, DEVICES, DOMAIN
 from .entity import AirWaterEntity
 
 
-@dataclass
+@dataclass(frozen=True)
 class AirWaterFanSpeedDescriptionMixin:
     feature: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class AirWaterFanSpeedDescription(NumberEntityDescription, AirWaterFanSpeedDescriptionMixin):
     ...
 

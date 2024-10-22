@@ -150,7 +150,7 @@ class AirWaterStatusSensor(AirWaterEntity, SensorEntity):
     def extra_state_attributes(self) -> Mapping[str, Any] | None:
         attrs = {}
         for prefix, data in (("status", self._device.status), ("settings", self._device.settings)):
-            for key, value in asdict(data).items():  # type: ignore
+            for key, value in asdict(data).items():
                 attrs[f"{prefix}.{key}"] = value
 
         return attrs

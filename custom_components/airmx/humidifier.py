@@ -1,5 +1,4 @@
 import json
-import logging
 from typing import Any
 
 from homeassistant.components.humidifier import (
@@ -20,8 +19,6 @@ from .airwater.const import AirWaterCommand, AirWaterMode
 from .airwater.device import AirWaterDevice
 from .const import ATTR_COMMAND_DATA, ATTR_COMMAND_ID, DEVICES, DOMAIN, MODE_MANUAL, SERVICE_SEND_COMMAND
 from .entity import AirWaterEntity
-
-_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(

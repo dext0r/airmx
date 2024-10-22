@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import logging
 from typing import Any
 
 from homeassistant.components.switch import SwitchEntity, SwitchEntityDescription
@@ -13,10 +12,8 @@ from .airwater.device import AirWaterDevice
 from .const import ATTR_ANION, ATTR_CHILD_LOCK, ATTR_HEATER, ATTR_PROXIMITY_SENSOR, DEVICES, DOMAIN
 from .entity import AirWaterEntity
 
-_LOGGER = logging.getLogger(__name__)
 
-
-@dataclass
+@dataclass(frozen=True)
 class AirWaterSwitchDescriptionMixin:
     feature: int | None
     setting: bool
@@ -26,7 +23,7 @@ class AirWaterSwitchDescriptionMixin:
     icon_off: str
 
 
-@dataclass
+@dataclass(frozen=True)
 class AirWaterSwitchDescription(SwitchEntityDescription, AirWaterSwitchDescriptionMixin):
     ...
 
