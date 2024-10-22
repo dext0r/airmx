@@ -18,7 +18,10 @@
       },
       "select_device": {
         "title": "Select device",
-        "description": "Select device or click SUBMIT to update device list"
+        "description": "Select device or click SUBMIT to update device list",
+        "data": {
+          "id": " "
+        }
       },
       "select_model": {
         "title": "Select model",
