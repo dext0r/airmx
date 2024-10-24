@@ -64,10 +64,11 @@ def aw() -> dict[str, Any] | str:
         raise HTTPException.NotImplemented()
 
     params = json.loads(request.args.get("params", ""))
-    wifi_mac = int.from_bytes(bytearray.fromhex(params["mac"]), byteorder="little")
+    wifi_mac_b = bytearray.fromhex(params["mac"].rjust(12, "0"))
+    wifi_mac = int.from_bytes(wifi_mac_b, byteorder="little")
     ble_mac = wifi_mac + 2
     device = Device(
-        id=int.from_bytes(bytearray.fromhex(params["mac"])[:2], byteorder="little"),
+        id=int.from_bytes(wifi_mac_b[:2], byteorder="little"),
         wifi_mac=wifi_mac.to_bytes(6, byteorder="big").hex(),
         ble_mac=ble_mac.to_bytes(6, byteorder="big").hex(),
         key=params["key"],
