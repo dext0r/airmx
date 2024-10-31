@@ -80,6 +80,8 @@ def aw() -> dict[str, Any] | str:
     match device.type:
         case 11:  # A5
             pass
+        case 20:  # A3S
+            pass
         case 21:  # A3S_V2 / Iris
             data = {
                 "awId": device.id,
