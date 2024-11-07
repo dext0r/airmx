@@ -72,6 +72,7 @@ Don't forget to run the addon and be sure to enable starting on boot.
    * `ip static tcp 140.143.130.176 255.255.255.255 1883 X.X.X.X 25883 !awm.airmx.cn`
    * `ip host i.airmx.cn 82.157.56.105`
    * `ip host awm.airmx.cn 140.143.130.176`
+   * `system configuration save`
 
 ### Mikrotik router
 
