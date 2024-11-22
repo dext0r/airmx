@@ -1,6 +1,6 @@
 # AIRMX and Tion Iris humidifiers component for Home Assistant
 
-**English** | [Русский](./README.ru.md)
+**English** | [Русский](./README.ru.md) | [中文](./README.zh.md)
 
 The component allows you to control AIRMX and Tion Iris humidifiers via Home Assistant completely locally. Simultaneous control via HA and the original Chinese AIRMX app is not possible.
 

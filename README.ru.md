@@ -1,6 +1,6 @@
 # Интеграция увлажнителей AIRMX и Tion Iris в Home Assistant
 
-[English](./README.md) | **Русский**
+[English](./README.md) | **Русский** | [中文](./README.zh.md)
 
 Компонент позволяет управлять увлажнителями AIRMX и Tion Iris через Home Assistant полностью локально. Одновременное управление через HA и оригинальное китайское приложение AIRMX невозможно.
 
