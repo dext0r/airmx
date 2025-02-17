@@ -137,6 +137,12 @@ Using the native AIRMX app (not working as Nov 2024):
 * Follow [screenshots](./images/ios) (make sure to give geolocation permissions)
 * After entering SSID and password, wait 20-30 seconds and you can close the application
 
+Using Windows PC with ble controller.
+
+* Env: Python >= 3.7, "pip install bleak"
+* Edit SSID and PASSWOR in ./change_ap_with_pc/conn.py
+* Run "pyhon ./change_ap_with_pc/conn.py", will scan nearby ble devices, choose each AIRMX device.
+
 ## Other
 
 * Changing AP binding can be done at any time, no need to remove the device from HA
